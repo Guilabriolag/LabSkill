@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>📖 Manual do Usuário — Skill Builder v4</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#fff;--bg2:#f5f5f3;--bg3:#ececea;
+  --bd:rgba(0,0,0,.12);--bd2:rgba(0,0,0,.2);--bd3:rgba(0,0,0,.35);
+  --tx:#1a1a1a;--tx2:#555;--tx3:#999;
+  --gold:#f5c842;--gold-dim:rgba(245,200,66,.08);
+  --tx-info:#185fa5;--tx-ok:#3b6d11;--tx-err:#a32d2d;
+  --bg-info:#e6f1fb;--bg-ok:#eaf3de;
+  --r:8px;--rl:12px;
+  --mono:'Courier New',monospace;
+}
+@media(prefers-color-scheme:dark){
+  :root{
+    --bg:#1a1a1a;--bg2:#111;--bg3:#0d0d0d;
+    --bd:rgba(255,255,255,.1);--bd2:rgba(255,255,255,.2);
+    --tx:#e8e8e8;--tx2:#aaa;--tx3:#666;
+    --gold:#f5c842;--gold-dim:rgba(245,200,66,.1);
+    --tx-info:#4a9eff;--tx-ok:#00e5a0;
+  }
+}
+body{font-family:var(--mono);background:var(--bg2);color:var(--tx);padding:2rem 1rem;line-height:1.5}
+.manual-container{max-width:960px;margin:0 auto}
+.manual-header{text-align:center;margin-bottom:2rem}
+.manual-header h1{font-size:28px;color:var(--gold);margin-bottom:6px}
+.manual-header p{color:var(--tx2);font-size:14px}
+.manual-nav{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;margin-bottom:2rem;border-bottom:1px solid var(--bd);padding-bottom:1rem}
+.nav-btn{background:var(--bg);border:0.5px solid var(--bd2);padding:6px 16px;border-radius:40px;font-family:var(--mono);font-size:12px;cursor:pointer;color:var(--tx2);transition:all .15s}
+.nav-btn:hover{border-color:var(--gold);color:var(--gold)}
+.nav-btn.active{background:var(--gold);color:#111;border-color:var(--gold);font-weight:500}
+.section{display:none;animation:fade .2s ease}
+.section.active{display:block}
+@keyframes fade{from{opacity:0}to{opacity:1}}
+.card{background:var(--bg);border:0.5px solid var(--bd);border-radius:var(--rl);padding:1.5rem;margin-bottom:1.5rem}
+.card h2{font-size:18px;margin-bottom:12px;color:var(--gold);display:flex;align-items:center;gap:8px}
+.card h3{font-size:14px;margin:16px 0 8px;color:var(--tx2)}
+.card p{font-size:13px;margin-bottom:10px;color:var(--tx2)}
+code{background:var(--bg2);padding:2px 6px;border-radius:6px;font-size:11px;border:0.5px solid var(--bd);font-family:var(--mono)}
+pre{background:var(--bg2);padding:12px;border-radius:var(--r);overflow-x:auto;font-size:11px;border:0.5px solid var(--bd);margin:12px 0;font-family:var(--mono);color:var(--gold)}
+.hint{background:var(--gold-dim);border-left:3px solid var(--gold);padding:10px 14px;border-radius:var(--r);margin:12px 0;font-size:12px}
+.badge{display:inline-block;background:var(--bg3);padding:2px 8px;border-radius:20px;font-size:10px;margin-right:8px}
+.interactive-demo{background:var(--bg2);border-radius:var(--r);padding:1rem;margin-top:1rem;border:0.5px dashed var(--bd2)}
+.demo-label{font-size:10px;text-transform:uppercase;color:var(--tx3);margin-bottom:8px;letter-spacing:.5px}
+.btn-demo{background:var(--gold);color:#111;border:none;padding:8px 16px;border-radius:var(--r);font-family:var(--mono);font-size:11px;cursor:pointer;margin-top:8px}
+.btn-demo:hover{opacity:.85}
+.flex-demo{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+.tag-demo{background:var(--bg);border:0.5px solid var(--bd2);padding:4px 12px;border-radius:20px;font-size:11px;cursor:pointer}
+.tag-demo.active{background:var(--gold-dim);border-color:var(--gold);color:var(--gold)}
+input.demo-input{background:var(--bg);border:0.5px solid var(--bd2);padding:8px 12px;border-radius:var(--r);font-family:var(--mono);width:100%;color:var(--tx);margin:6px 0}
+.glow{color:var(--gold)}
+.back-link{margin-top:2rem;text-align:center}
+.back-link a{color:var(--gold);text-decoration:none;font-size:12px}
+hr{margin:1rem 0;border-color:var(--bd)}
+</style>
+</head>
+<body>
+<div class="manual-container">
+  <div class="manual-header">
+    <h1>📖 Skill Builder · Manual do Usuário</h1>
+    <p>Crie, teste e exporte skills para IA — guia prático e interativo</p>
+  </div>
+
+  <div class="manual-nav" id="manual-nav">
+    <button class="nav-btn active" data-section="intro">✨ Introdução</button>
+    <button class="nav-btn" data-section="pop">⚡ Modo Pop</button>
+    <button class="nav-btn" data-section="pro">🛠️ Modo Pro</button>
+    <button class="nav-btn" data-section="lab">🏷️ Padrão Labriolag</button>
+    <button class="nav-btn" data-section="runner">🧪 Teste sua Skill</button>
+    <button class="nav-btn" data-section="export">📦 Exportar</button>
+    <button class="nav-btn" data-section="market">🎪 Explorar</button>
+  </div>
+
+  <!-- INTRO SECTION -->
+  <div id="section-intro" class="section active">
+    <div class="card">
+      <h2>✨ O que é o Skill Builder?</h2>
+      <p>Skill Builder é uma ferramenta que permite <strong>criar instruções detalhadas (skills)</strong> para assistentes de IA como o Claude. Você descreve o que quer que a IA faça, define gatilhos, regras e obtém um arquivo <code>.skill</code> (ou <code>.md</code>) pronto para usar.</p>
+      <div class="hint">
+        💡 <strong>Dica:</strong> Uma skill é como um "superpoder" — um conjunto de instruções, exemplos e limites que moldam a resposta da IA.
+      </div>
+      <h3>🎯 Fluxo básico</h3>
+      <pre>1. Escolha o modo POP (rápido) ou PRO (detalhado)
+2. Preencha o que a IA deve fazer
+3. Defina triggers (frases que ativam a skill)
+4. Ajuste regras, stack e exemplos
+5. Teste com o simulador
+6. Baixe .skill ou .md</pre>
+    </div>
+  </div>
+
+  <!-- POP MODE SECTION -->
+  <div id="section-pop" class="section">
+    <div class="card">
+      <h2>⚡ Modo Pop — crie em segundos</h2>
+      <p>Ideal para gerar uma skill rapidamente sem entender todos os detalhes. Basta responder três perguntas.</p>
+      <div class="interactive-demo">
+        <div class="demo-label">🎨 Simulador do Modo Pop</div>
+        <label class="demo-label">O que a IA deve fazer?</label>
+        <input type="text" id="demo-what" class="demo-input" placeholder="ex: criar roteiros de vídeo para TikTok" value="criar roteiros de vídeo para TikTok">
+        <label class="demo-label">Como ela deve responder?</label>
+        <input type="text" id="demo-how" class="demo-input" placeholder="ex: linguagem jovem, com gancho nos primeiros 3s" value="linguagem jovem, gancho forte, hashtags">
+        <label class="demo-label">Quando ativar? (trigger)</label>
+        <input type="text" id="demo-when" class="demo-input" placeholder='ex: "quero um roteiro", "cria vídeo"' value='quero um roteiro, cria vídeo'>
+        <button class="btn-demo" id="demo-pop-run">✨ Gerar preview da skill</button>
+        <div id="demo-pop-output" style="margin-top:12px;font-size:11px;background:var(--bg);padding:8px;border-radius:var(--r);border:0.5px solid var(--bd);white-space:pre-wrap;font-family:var(--mono);color:var(--tx2)"></div>
+      </div>
+      <h3>📋 Templates rápidos</h3>
+      <p>Use os botões <strong>🍔 Cardápio digital</strong>, <strong>🤖 Atendente virtual</strong>, <strong>📝 Gerador de posts</strong> — eles pré-preenchem os campos com exemplos reais.</p>
+      <div class="hint">💡 Após gerar, você pode clicar em "Modo avançado" para editar todos os detalhes da skill.</div>
+    </div>
+  </div>
+
+  <!-- PRO MODE SECTION -->
+  <div id="section-pro" class="section">
+    <div class="card">
+      <h2>🛠️ Modo Pro — controle total</h2>
+      <p>No modo profissional você gerencia: nome, versão, descrição, stack tecnológica, regras obrigatórias, anti-erros, exemplos de ativação/não ativação e muito mais.</p>
+      <h3>🔧 Campos essenciais</h3>
+      <ul style="margin-left:1.5rem;font-size:13px;color:var(--tx2);margin-bottom:12px">
+        <li><span class="glow">Nome da skill</span> → identificador único (ex: <code>lqr-menu-builder</code>)</li>
+        <li><span class="glow">Descrição / trigger principal</span> → o Claude lê esse texto para decidir se ativa a skill</li>
+        <li><span class="glow">O que ela faz</span> → comportamento detalhado e formato de saída</li>
+        <li><span class="glow">Stack</span> → tags como Vanilla JS, Cloudflare, PWA, Bitcoin</li>
+        <li><span class="glow">Regras</span> → princípios obrigatórios que a IA deve seguir</li>
+        <li><span class="glow">Anti-erros</span> → comportamentos proibidos explicitamente</li>
+      </ul>
+      <div class="interactive-demo">
+        <div class="demo-label">🏷️ Teste interativo — escolha sua stack favorita</div>
+        <div class="flex-demo" id="stack-demo">
+          <span class="tag-demo" data-stack="Vanilla JS">⚡ Vanilla JS</span>
+          <span class="tag-demo" data-stack="Cloudflare Workers">☁️ CF Workers</span>
+          <span class="tag-demo" data-stack="Lightning Network">⚡ Lightning</span>
+          <span class="tag-demo" data-stack="PWA">📱 PWA</span>
+          <span class="tag-demo" data-stack="Offline-first">📡 Offline-first</span>
+        </div>
+        <div id="stack-feedback" style="font-size:11px;margin-top:8px;color:var(--tx3)">Clique em qualquer tag para ativar → isso vira parte da sua skill.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- LABRIOLAG SECTION -->
+  <div id="section-lab" class="section">
+    <div class="card">
+      <h2>🏷️ Padrão Labriolag — estética e filosofia</h2>
+      <p>O botão <strong>"Aplicar padrão Labriolag"</strong> insere automaticamente um conjunto de regras, stack e anti-erros alinhados com a identidade <strong>Ink × Gold × Cyber</strong>.</p>
+      <div class="hint">
+        🧠 <strong>Manifesto:</strong> "A soberania digital não é pedida, é construída linha por linha."
+      </div>
+      <h3>✨ O que o padrão Labriolag adiciona?</h3>
+      <pre>- Stack: Vanilla JS, Cloudflare Workers, Lightning, D1/KV, PWA, Offline-first, Bitcoin
+- Regras: zero frameworks externos, arquivo único, estética preta + dourada + azul elétrico
+- Anti-erros: proíbe React/Vue, proíbe chaves privadas no cliente, proíbe cores genéricas</pre>
+      <div class="interactive-demo">
+        <div class="demo-label">🎨 Preview visual da paleta Labriolag</div>
+        <div style="display:flex;gap:12px;margin:12px 0">
+          <div style="width:40px;height:40px;background:#0a0a0a;border-radius:8px;border:1px solid var(--gold)"></div>
+          <div style="width:40px;height:40px;background:#f5c842;border-radius:8px"></div>
+          <div style="width:40px;height:40px;background:#1a8cff;border-radius:8px"></div>
+          <div style="width:40px;height:40px;background:#f0f0f0;border-radius:8px"></div>
+        </div>
+        <p style="font-size:12px">⬤ Preto absoluto · ⬤ Dourado #f5c842 · ⬤ Azul elétrico · ⬤ Branco suave</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- TEST YOUR SKILL -->
+  <div id="section-runner" class="section">
+    <div class="card">
+      <h2>🧪 Teste sua skill — Simulador de ativação</h2>
+      <p>Antes de exportar, use o campo <strong>"Testar skill"</strong> no modo Pro. Digite uma frase e veja se a skill seria ativada com base nos triggers e descrições.</p>
+      <div class="interactive-demo">
+        <div class="demo-label">🎮 Simulador — teste qualquer frase</div>
+        <input type="text" id="runner-sim-input" class="demo-input" placeholder='ex: "cria um cardápio digital para minha cafeteria"'>
+        <button class="btn-demo" id="runner-sim-btn">🔍 Testar ativação</button>
+        <div id="runner-sim-result" class="hint" style="margin-top:12px;background:transparent;border:0.5px solid var(--bd2);font-size:12px">Resultado aparecerá aqui.</div>
+        <p style="font-size:10px;color:var(--tx3);margin-top:8px">💡 O simulador usa os mesmos critérios da skill real: palavras-chave nos triggers e descrição.</p>
+      </div>
+      <h3>⚙️ Como funciona o teste?</h3>
+      <p>O sistema compara a frase com <strong>triggers cadastrados</strong> e com o texto da <strong>descrição principal</strong>. Se houver correspondência, o resultado é "Skill ATIVARIA".</p>
+    </div>
+  </div>
+
+  <!-- EXPORT SECTION -->
+  <div id="section-export" class="section">
+    <div class="card">
+      <h2>📦 Exportar — .skill vs .md</h2>
+      <p>Após criar sua skill, você pode baixá-la de duas formas:</p>
+      <ul style="margin-left:1.5rem;font-size:13px;margin-bottom:12px">
+        <li><span class="glow">.skill</span> → arquivo compactado (.zip disfarçado) contendo <code>SKILL.md</code>, <code>manifest.json</code> e um <code>icon.svg</code> personalizado. Pronto para distribuição.</li>
+        <li><span class="glow">.md</span> → apenas o arquivo Markdown com toda a estrutura da skill (fácil de ler e editar manualmente).</li>
+      </ul>
+      <div class="hint">
+        📌 <strong>Copiar markdown:</strong> útil para colar diretamente em chats, documentação ou repositórios.
+      </div>
+      <h3>📁 Estrutura interna do .skill</h3>
+      <pre>minha-skill.skill (ZIP)
+ ├─ SKILL.md          → instruções completas (frontmatter + markdown)
+ ├─ manifest.json     → metadados (id, versão, autor, capacidades)
+ └─ icon.svg          → ícone gerado com a primeira letra da skill</pre>
+      <div class="interactive-demo">
+        <div class="demo-label">📄 Preview do frontmatter gerado</div>
+        <pre id="demo-frontmatter" style="font-size:10px;margin:0">---\nname: exemplo-skill\nversion: v1.0\nauthor: Labriolag\ndescription: ...\n---</pre>
+      </div>
+    </div>
+  </div>
+
+  <!-- MARKET SECTION -->
+  <div id="section-market" class="section">
+    <div class="card">
+      <h2>🎪 Explorar Skills — marketplace integrado</h2>
+      <p>Na aba <strong>"explorar"</strong> você encontra skills prontas da comunidade: cardápios digitais, geradores de posts, landing pages, relatórios executivos e mais.</p>
+      <p><strong>Como usar:</strong> clique em "Usar este →" e a skill será carregada no modo Pro automaticamente. Edite os detalhes e baixe sua versão personalizada.</p>
+      <div class="interactive-demo">
+        <div class="demo-label">🌟 Exemplo rápido — skill "Cardápio Pro"</div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:8px">
+          <span class="tag-demo" style="background:var(--gold-dim)">📱 PWA</span>
+          <span class="tag-demo" style="background:var(--gold-dim)">⚡ Offline-first</span>
+        </div>
+        <p style="font-size:12px">Gera HTML completo com QR code, WhatsApp e design responsivo. Ideal para restaurantes.</p>
+        <button class="btn-demo" id="demo-import-market">📥 Importar exemplo Cardápio</button>
+        <div id="market-feedback" style="font-size:11px;margin-top:8px"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="back-link">
+    <hr>
+    <a href="#" onclick="window.location.reload();return false;">⟳ Voltar ao Skill Builder principal</a>
+    <span style="color:var(--tx3);margin:0 6px">·</span>
+    <a href="#" onclick="window.scrollTo({top:0,behavior:'smooth'});return false;">⬆️ Topo</a>
+  </div>
+</div>
+
+<script>
+// Navegação entre seções
+const sections = ['intro','pop','pro','lab','runner','export','market'];
+function activateSection(sectionId) {
+  sections.forEach(sec => {
+    const el = document.getElementById(`section-${sec}`);
+    if(el) el.classList.remove('active');
+    const btn = document.querySelector(`.nav-btn[data-section="${sec}"]`);
+    if(btn) btn.classList.remove('active');
+  });
+  const newSec = document.getElementById(`section-${sectionId}`);
+  if(newSec) newSec.classList.add('active');
+  const activeBtn = document.querySelector(`.nav-btn[data-section="${sectionId}"]`);
+  if(activeBtn) activeBtn.classList.add('active');
+}
+
+document.querySelectorAll('.nav-btn').forEach(btn => {
+  btn.addEventListener('click', (e) => {
+    const sec = btn.getAttribute('data-section');
+    if(sec) activateSection(sec);
+  });
+});
+
+// Simulador Modo Pop
+const demoWhat = document.getElementById('demo-what');
+const demoHow = document.getElementById('demo-how');
+const demoWhen = document.getElementById('demo-when');
+const demoBtn = document.getElementById('demo-pop-run');
+const demoOutput = document.getElementById('demo-pop-output');
+
+function generateDemoSkill() {
+  const what = demoWhat.value.trim() || "criar algo útil";
+  const how = demoHow.value.trim() || "resposta clara e direta";
+  const when = demoWhen.value.trim() || "quando eu pedir ajuda";
+  const slug = what.slice(0,30).toLowerCase().replace(/[^a-z0-9]/g,'-').replace(/-+/g,'-').replace(/^-|-$/g,'') || "minha-skill";
+  const triggers = when.split(',').map(t=>t.trim()).filter(Boolean);
+  const markdown = `---
+name: ${slug}
+version: v1.0
+author: Demo
+description: ${when}
+---
+
+# ${slug}
+
+## O que faz
+${what}
+
+## Como responde
+${how}
+
+## Triggers
+${triggers.map(t=>`- "${t}"`).join('\n')}
+
+## Regras sugeridas
+- Sempre siga o tom definido
+- Responda somente sobre o escopo da skill
+`;
+  demoOutput.textContent = markdown.slice(0, 500) + (markdown.length > 500 ? "\n... (conteúdo cortado)" : "");
+}
+demoBtn.addEventListener('click', generateDemoSkill);
+generateDemoSkill();
+
+// Stack interativa no modo Pro
+let selectedStacks = [];
+const stackContainer = document.getElementById('stack-demo');
+const stackFeedback = document.getElementById('stack-feedback');
+if(stackContainer) {
+  document.querySelectorAll('.tag-demo').forEach(tag => {
+    tag.addEventListener('click', () => {
+      const stack = tag.getAttribute('data-stack');
+      if(tag.classList.contains('active')) {
+        tag.classList.remove('active');
+        selectedStacks = selectedStacks.filter(s => s !== stack);
+      } else {
+        tag.classList.add('active');
+        if(!selectedStacks.includes(stack)) selectedStacks.push(stack);
+      }
+      stackFeedback.innerHTML = `Stack ativada: ${selectedStacks.length ? selectedStacks.join(', ') : 'nenhuma selecionada'} — essas tags vão para o campo "Stack" da skill.`;
+    });
+  });
+}
+
+// Simulador de Teste (Runner)
+const runnerInput = document.getElementById('runner-sim-input');
+const runnerBtn = document.getElementById('runner-sim-btn');
+const runnerResult = document.getElementById('runner-sim-result');
+
+function simulateRunner() {
+  const phrase = runnerInput.value.trim().toLowerCase();
+  if(!phrase) {
+    runnerResult.innerHTML = '⚠️ Digite uma frase para testar.';
+    runnerResult.style.borderLeftColor = 'var(--tx3)';
+    return;
+  }
+  // triggers de exemplo (simula uma skill padrão)
+  const demoTriggers = ['cardápio digital', 'criar menu', 'montar cardápio', 'cardápio', 'menu'];
+  const demoDesc = 'criar cardápios digitais bonitos e funcionais';
+  const allTerms = [...demoTriggers, demoDesc];
+  const matched = allTerms.some(term => phrase.includes(term));
+  if(matched) {
+    const matchWord = demoTriggers.find(t => phrase.includes(t)) || 'descrição da skill';
+    runnerResult.innerHTML = `✅ Skill ATIVARIA — match com: "${matchWord}"`;
+    runnerResult.style.borderLeftColor = 'var(--tx-ok)';
+    runnerResult.style.background = 'var(--bg-ok)';
+    runnerResult.style.color = 'var(--tx-ok)';
+  } else {
+    runnerResult.innerHTML = `❌ Skill NÃO ativaria — frase não corresponde a nenhum trigger (ex: "cardápio", "criar menu") nem à descrição.`;
+    runnerResult.style.borderLeftColor = 'var(--tx-err)';
+    runnerResult.style.background = 'rgba(163,45,45,.05)';
+    runnerResult.style.color = 'var(--tx-err)';
+  }
+}
+if(runnerBtn) runnerBtn.addEventListener('click', simulateRunner);
+if(runnerInput) runnerInput.addEventListener('keypress', (e) => { if(e.key === 'Enter') simulateRunner(); });
+
+// Preview frontmatter demo
+const frontPreview = document.getElementById('demo-frontmatter');
+if(frontPreview) {
+  frontPreview.textContent = `---\nname: minha-skill-exemplo\nversion: v1.0\nauthor: Labriolag\ndescription: Criação automática de cardápios\ndependencies: nenhuma\n---\n# minha-skill-exemplo\n\n## O que faz\nGera HTML interativo com QR e WhatsApp.`;
+}
+
+// Import market demo
+const demoImportBtn = document.getElementById('demo-import-market');
+const marketFeedback = document.getElementById('market-feedback');
+if(demoImportBtn) {
+  demoImportBtn.addEventListener('click', () => {
+    marketFeedback.innerHTML = '✅ Skill "Cardápio Pro" carregada! No modo Pro real, você veria nome, descrição, triggers e tags preenchidos. <br> → Dica: mude para a aba "explorar" no app principal e clique em qualquer card.';
+    marketFeedback.style.color = 'var(--tx-ok)';
+    setTimeout(() => {
+      marketFeedback.style.color = 'var(--tx2)';
+    }, 3000);
+  });
+}
+
+// mensagem extra: lembrete sobre auto-save
+const styleReminder = document.createElement('style');
+styleReminder.textContent = `
+  .glow { color: var(--gold); font-weight:500; }
+  .interactive-demo { transition: all .1s; }
+`;
+document.head.appendChild(styleReminder);
+
+// Tema escuro/claro automático baseado no sistema (não afeta o manual em si mas respeita variáveis)
+function syncThemeFromParent() {
+  // apenas para manter coerência visual
+  if(window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+    document.body.style.background = 'var(--bg2)';
+  }
+}
+syncThemeFromParent();
+</script>
+</body>
+              </html>
