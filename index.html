@@ -1,0 +1,801 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Skill Builder v4 — Labriolag</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#fff;--bg2:#f5f5f3;--bg3:#ececea;
+  --bd:rgba(0,0,0,.12);--bd2:rgba(0,0,0,.2);--bd3:rgba(0,0,0,.35);
+  --bd-info:rgba(24,95,165,.4);--bd-ok:rgba(59,109,17,.4);--bd-err:rgba(163,45,45,.4);
+  --tx:#1a1a1a;--tx2:#555;--tx3:#999;
+  --tx-info:#185fa5;--tx-ok:#3b6d11;--tx-err:#a32d2d;
+  --bg-info:#e6f1fb;--bg-ok:#eaf3de;
+  --r:8px;--rl:12px;
+  --gold:#f5c842;--gold-dim:rgba(245,200,66,.08);
+  --mono:'Courier New',monospace;
+}
+@media(prefers-color-scheme:dark){
+  :root{
+    --bg:#1a1a1a;--bg2:#111;--bg3:#0d0d0d;
+    --bd:rgba(255,255,255,.1);--bd2:rgba(255,255,255,.2);--bd3:rgba(255,255,255,.35);
+    --bd-info:rgba(74,158,255,.4);--bd-ok:rgba(0,229,160,.4);--bd-err:rgba(240,149,149,.4);
+    --tx:#e8e8e8;--tx2:#aaa;--tx3:#666;
+    --tx-info:#4a9eff;--tx-ok:#00e5a0;--tx-err:#f09595;
+    --bg-info:rgba(74,158,255,.1);--bg-ok:rgba(0,229,160,.1);
+  }
+}
+html,body{font-family:var(--mono);background:var(--bg2);min-height:100vh}
+
+/* ── LAYOUT ───────────────────────────────── */
+.wrap{max-width:1120px;margin:0 auto;padding:1.25rem 1rem 3rem}
+
+/* ── HEADER ───────────────────────────────── */
+.hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap;gap:8px}
+.hdr-left{display:flex;align-items:center;gap:10px}
+.logo{font-size:11px;font-weight:500;color:var(--tx3);letter-spacing:.1em;text-transform:uppercase}
+.badge{font-size:10px;padding:2px 8px;border-radius:20px;border:0.5px solid var(--bd2);color:var(--tx3)}
+.hdr-right{display:flex;gap:6px;align-items:center}
+
+/* ── MODE TABS ─────────────────────────────── */
+.mode-tabs{display:flex;gap:0;border:0.5px solid var(--bd2);border-radius:var(--rl);overflow:hidden;background:var(--bg)}
+.tab-btn{padding:7px 18px;font-size:11px;font-family:var(--mono);background:transparent;border:none;color:var(--tx2);cursor:pointer;transition:all .15s;border-right:0.5px solid var(--bd)}
+.tab-btn:last-child{border-right:none}
+.tab-btn.active{background:var(--tx);color:var(--bg);font-weight:500}
+
+/* ── POP MODE ──────────────────────────────── */
+#pop-mode{display:block}
+#pro-mode{display:none}
+
+.pop-wrap{max-width:520px;margin:0 auto;padding:2rem 0 1rem}
+.pop-title{font-size:22px;font-weight:500;color:var(--tx);text-align:center;margin-bottom:6px;line-height:1.3}
+.pop-sub{font-size:13px;color:var(--tx2);text-align:center;margin-bottom:2rem;line-height:1.6}
+
+/* templates */
+.tpl-row{display:flex;flex-wrap:wrap;gap:7px;justify-content:center;margin-bottom:2rem}
+.tpl-btn{font-size:12px;padding:6px 14px;border-radius:20px;border:0.5px solid var(--bd2);background:var(--bg);color:var(--tx2);cursor:pointer;font-family:var(--mono);transition:all .15s}
+.tpl-btn:hover{border-color:var(--gold);color:var(--gold)}
+
+/* pop form */
+.pop-card{background:var(--bg);border:0.5px solid var(--bd);border-radius:var(--rl);padding:1.5rem;display:flex;flex-direction:column;gap:14px}
+.pop-label{font-size:11px;color:var(--tx3);text-transform:uppercase;letter-spacing:.07em;margin-bottom:4px}
+.pop-input{width:100%;font-family:var(--mono);font-size:13px;background:var(--bg2);color:var(--tx);border:0.5px solid var(--bd2);border-radius:var(--r);padding:10px 12px;resize:vertical;min-height:56px;line-height:1.55;transition:border-color .15s}
+.pop-input:focus{outline:none;border-color:var(--gold)}
+.pop-input.single{min-height:0;height:42px;resize:none}
+
+.btn-create{width:100%;padding:13px;font-size:13px;font-weight:500;font-family:var(--mono);background:var(--gold);color:#111;border:none;border-radius:var(--r);cursor:pointer;transition:opacity .15s;margin-top:4px}
+.btn-create:hover{opacity:.88}
+
+/* pop result */
+#pop-result{display:none;margin-top:1.5rem}
+.result-card{background:var(--bg);border:0.5px solid var(--bd-ok);border-radius:var(--rl);padding:1.25rem}
+.result-title{font-size:12px;color:var(--tx-ok);font-weight:500;margin-bottom:8px}
+.result-preview{font-size:11px;color:var(--tx2);line-height:1.7;white-space:pre-wrap;max-height:140px;overflow-y:auto;margin-bottom:12px;font-family:var(--mono)}
+.result-btns{display:flex;gap:8px;flex-wrap:wrap}
+.rbtn{padding:8px 14px;font-size:11px;font-family:var(--mono);border-radius:var(--r);border:0.5px solid var(--bd2);background:var(--bg2);color:var(--tx);cursor:pointer;transition:all .15s}
+.rbtn:hover{border-color:var(--bd3)}
+.rbtn.primary{background:var(--bg-info);color:var(--tx-info);border-color:var(--bd-info)}
+.rbtn.success{background:var(--bg-ok);color:var(--tx-ok);border-color:var(--bd-ok)}
+.rbtn.gold{background:var(--gold-dim);color:var(--gold);border-color:rgba(245,200,66,.3)}
+
+/* ── PRO MODE ──────────────────────────────── */
+.pro-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+@media(max-width:640px){.pro-grid{grid-template-columns:1fr}}
+.panel{background:var(--bg2);border:0.5px solid var(--bd);border-radius:var(--rl);padding:1.25rem;display:flex;flex-direction:column;gap:10px}
+.sec{font-size:10px;font-weight:500;color:var(--tx3);letter-spacing:.08em;text-transform:uppercase;margin:4px 0 2px}
+.field{display:flex;flex-direction:column;gap:4px}
+label{font-size:12px;color:var(--tx2)}
+input,textarea{width:100%;font-family:var(--mono);font-size:12px;background:var(--bg);color:var(--tx);border:0.5px solid var(--bd2);border-radius:var(--r);padding:7px 10px;resize:vertical;transition:border-color .15s}
+input:focus,textarea:focus{outline:none;border-color:var(--gold)}
+textarea{min-height:60px;line-height:1.5}
+.char{font-size:10px;color:var(--tx3);text-align:right;margin-top:2px}
+.hr{height:0.5px;background:var(--bd);margin:2px 0}
+
+/* lab toggle */
+.lab-toggle{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:var(--r);border:0.5px solid var(--bd2);background:var(--bg);cursor:pointer;transition:all .2s}
+.lab-toggle.on{border-color:var(--gold);background:var(--gold-dim)}
+.lt-icon{width:32px;height:18px;border-radius:9px;background:var(--bd2);position:relative;transition:background .2s;flex-shrink:0}
+.lt-icon::after{content:'';position:absolute;top:2px;left:2px;width:14px;height:14px;border-radius:7px;background:#fff;transition:transform .2s}
+.lab-toggle.on .lt-icon{background:var(--gold)}
+.lab-toggle.on .lt-icon::after{transform:translateX(14px)}
+.lt-label{font-size:11px;color:var(--tx2);line-height:1.4}
+.lab-toggle.on .lt-label{color:var(--gold)}
+
+/* tags */
+.tag-row{display:flex;flex-wrap:wrap;gap:5px;margin-top:2px}
+.tag{font-size:11px;padding:3px 9px;border-radius:20px;border:0.5px solid var(--bd2);background:var(--bg);color:var(--tx2);cursor:pointer;transition:all .15s;font-family:var(--mono)}
+.tag.active{background:var(--bg-info);color:var(--tx-info);border-color:var(--bd-info)}
+
+/* triggers */
+.trig-list{display:flex;flex-direction:column;gap:4px;margin-top:4px}
+.trig-item{display:flex;align-items:center;gap:6px}
+.trig-item input{flex:1;padding:5px 8px}
+.trig-del{padding:4px 8px;border:0.5px solid var(--bd2);border-radius:var(--r);background:var(--bg);color:var(--tx3);cursor:pointer;font-size:12px;font-family:var(--mono);flex-shrink:0}
+.trig-del:hover{color:var(--tx-err);border-color:var(--bd-err)}
+.btn-add{font-size:11px;padding:4px 10px;border:0.5px dashed var(--bd2);border-radius:var(--r);background:transparent;color:var(--tx3);cursor:pointer;font-family:var(--mono);width:100%;margin-top:2px}
+.btn-add:hover{color:var(--tx);border-color:var(--bd3)}
+
+/* collapsible */
+.coll{border:0.5px solid var(--bd);border-radius:var(--r);overflow:hidden}
+.coll-hdr{padding:8px 12px;font-size:11px;color:var(--tx2);cursor:pointer;display:flex;justify-content:space-between;align-items:center;background:var(--bg);user-select:none}
+.coll-hdr:hover{color:var(--tx)}
+.coll-body{display:none;padding:10px 12px;background:var(--bg2);border-top:0.5px solid var(--bd);flex-direction:column;gap:8px}
+.coll-body.open{display:flex}
+
+/* preview */
+.preview-label{font-size:10px;color:var(--tx3);margin-bottom:4px;letter-spacing:.06em;text-transform:uppercase}
+.preview{background:var(--bg);border:0.5px solid var(--bd);border-radius:var(--r);padding:12px;font-size:11px;line-height:1.75;white-space:pre-wrap;word-break:break-word;flex:1;overflow-y:auto;max-height:560px;font-family:var(--mono);color:var(--tx)}
+.preview.dark-mode{background:#0d0d0d!important;color:#e0e0e0!important;border-color:#333!important}
+.pk{color:#4a9eff}.pc{color:var(--tx3)}.ph1{color:var(--gold);font-weight:500}.ph2{font-weight:500}.pl{color:var(--tx2)}
+
+/* buttons */
+.btn-row{display:flex;gap:6px;flex-wrap:wrap;margin-top:4px}
+.btn{padding:7px 13px;border-radius:var(--r);border:0.5px solid var(--bd2);background:var(--bg);color:var(--tx);font-size:11px;font-family:var(--mono);cursor:pointer;transition:all .15s}
+.btn:hover{background:var(--bg3)}
+.btn-skill{background:var(--bg-info);color:var(--tx-info);border-color:var(--bd-info);font-weight:500}
+.btn-md{background:var(--bg-ok);color:var(--tx-ok);border-color:var(--bd-ok);font-weight:500}
+.btn-dark{font-size:10px;padding:4px 10px;border-radius:20px;border:0.5px solid var(--bd2);background:var(--bg);color:var(--tx2);cursor:pointer;font-family:var(--mono)}
+
+/* autosave indicator */
+.autosave{font-size:10px;color:var(--tx3);margin-top:4px;text-align:right}
+.autosave.saved{color:var(--tx-ok)}
+
+/* ── SKILL RUNNER ──────────────────────── */
+.runner-wrap{display:flex;gap:6px;align-items:stretch;margin-top:2px}
+.runner-wrap input{flex:1}
+.runner-result{margin-top:6px;padding:8px 10px;border-radius:var(--r);font-size:11px;font-family:var(--mono);display:none;border:0.5px solid var(--bd)}
+.runner-result.hit{background:var(--bg-ok);color:var(--tx-ok);border-color:var(--bd-ok);display:block}
+.runner-result.miss{background:#fff3f3;color:var(--tx-err);border-color:var(--bd-err);display:block}
+@media(prefers-color-scheme:dark){.runner-result.miss{background:rgba(240,149,149,.07)}}
+
+/* ── MARKET ────────────────────────────── */
+#market-mode{display:none}
+.market-wrap{padding:1.5rem 0}
+.market-title{font-size:18px;font-weight:500;color:var(--tx);margin-bottom:4px}
+.market-sub{font-size:12px;color:var(--tx2);margin-bottom:1.5rem}
+.market-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:10px}
+.mcard{background:var(--bg);border:0.5px solid var(--bd);border-radius:var(--rl);padding:14px;display:flex;flex-direction:column;gap:8px;transition:border-color .15s}
+.mcard:hover{border-color:var(--gold)}
+.mcard-icon{width:40px;height:40px;border-radius:10px;background:#0a0a0a;display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:500;color:var(--gold);flex-shrink:0;font-family:var(--mono)}
+.mcard-name{font-size:12px;font-weight:500;color:var(--tx)}
+.mcard-desc{font-size:11px;color:var(--tx2);line-height:1.5;flex:1}
+.mcard-tags{display:flex;flex-wrap:wrap;gap:4px}
+.mcard-tag{font-size:10px;padding:2px 7px;border-radius:20px;background:var(--bg2);border:0.5px solid var(--bd);color:var(--tx3);font-family:var(--mono)}
+.mcard-uses{font-size:10px;color:var(--tx3);font-family:var(--mono)}
+.pkg-info{margin-top:8px;padding:8px 10px;background:var(--bg2);border-radius:var(--r);border:0.5px solid var(--bd);font-size:10px;color:var(--tx3);font-family:var(--mono);line-height:1.7}
+</style>
+</head>
+<body>
+<div id="outer">
+<div class="wrap">
+
+  <!-- HEADER -->
+  <div class="hdr">
+    <div class="hdr-left">
+      <span class="logo">Skill Builder</span>
+      <span class="badge" id="version-badge">v4.0</span>
+    </div>
+    <div class="hdr-right">
+      <div class="mode-tabs">
+        <button class="tab-btn active" id="tab-pop" onclick="setMode('pop')">modo pop</button>
+        <button class="tab-btn" id="tab-pro" onclick="setMode('pro')">modo pro</button>
+        <button class="tab-btn" id="tab-market" onclick="setMode('market')">explorar</button>
+      </div>
+      <button class="btn-dark" onclick="toggleDark()" id="theme-btn">escuro</button>
+    </div>
+  </div>
+
+  <!-- ══════════ POP MODE ══════════ -->
+  <div id="pop-mode">
+    <div class="pop-wrap">
+      <div class="pop-title">Dê um superpoder pra sua IA</div>
+      <div class="pop-sub">Descreva o que você quer — a skill é criada na hora.</div>
+
+      <!-- templates rápidos -->
+      <div class="tpl-row">
+        <button class="tpl-btn" onclick="fillTemplate('cardapio')">🍔 Cardápio digital</button>
+        <button class="tpl-btn" onclick="fillTemplate('atendente')">🤖 Atendente virtual</button>
+        <button class="tpl-btn" onclick="fillTemplate('posts')">📝 Gerador de posts</button>
+        <button class="tpl-btn" onclick="fillTemplate('site')">💻 Criador de sites</button>
+        <button class="tpl-btn" onclick="fillTemplate('relatorio')">📊 Relatórios</button>
+      </div>
+
+      <div class="pop-card">
+        <div class="field">
+          <div class="pop-label">O que você quer que a IA faça? *</div>
+          <textarea class="pop-input" id="pop-what" placeholder="ex: criar cardápios digitais bonitos pra restaurantes pequenos" oninput="popPreview()"></textarea>
+        </div>
+        <div class="field">
+          <div class="pop-label">Como ela deve responder? <span style="opacity:.5">(opcional)</span></div>
+          <textarea class="pop-input" id="pop-how" placeholder="ex: simples, direto, com título e lista de preços" oninput="popPreview()"></textarea>
+        </div>
+        <div class="field">
+          <div class="pop-label">Quando isso deve ativar? <span style="opacity:.5">(opcional)</span></div>
+          <textarea class="pop-input single" id="pop-when" placeholder='ex: quando eu pedir "cria cardápio"' oninput="popPreview()"></textarea>
+        </div>
+        <button class="btn-create" onclick="generateFromPop()">Criar minha IA →</button>
+      </div>
+
+      <!-- resultado pop -->
+      <div id="pop-result">
+        <div class="result-card">
+          <div class="result-title">Sua IA está pronta</div>
+          <div class="result-preview" id="pop-result-preview"></div>
+          <div class="result-btns">
+            <button class="rbtn primary" onclick="downloadSkill()">Baixar .skill</button>
+            <button class="rbtn success" onclick="downloadMd()">Baixar .md</button>
+            <button class="rbtn" onclick="copyMd()">Copiar markdown</button>
+            <button class="rbtn gold" onclick="setMode('pro')">⚙ Modo avançado</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════ PRO MODE ══════════ -->
+  <div id="pro-mode">
+    <div class="pro-grid">
+
+      <!-- FORM -->
+      <div class="panel">
+        <div class="sec">Identidade</div>
+        <div class="field">
+          <label>Nome da skill *</label>
+          <input id="f-name" placeholder="ex: lqr-menu-builder" oninput="update()">
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+          <div class="field">
+            <label>Versão</label>
+            <input id="f-ver" value="v1.0" oninput="update()">
+          </div>
+          <div class="field">
+            <label>Autor</label>
+            <input id="f-author" value="Labriolag" oninput="update()">
+          </div>
+        </div>
+
+        <div class="hr"></div>
+        <div class="sec">Preset</div>
+        <div class="lab-toggle" id="lab-toggle" onclick="toggleLab()">
+          <div class="lt-icon"></div>
+          <div class="lt-label">Aplicar padrão Labriolag<br><span style="font-size:10px;opacity:.6">Ink × Gold × Cyber · Vanilla JS · Cloudflare · Lightning</span></div>
+        </div>
+
+        <div class="hr"></div>
+        <div class="sec">Conteúdo</div>
+        <div class="field">
+          <label>Descrição / trigger principal *</label>
+          <textarea id="f-desc" placeholder="Quando usar esta skill? O Claude decide pelo texto aqui." oninput="update()"></textarea>
+          <div class="char" id="char-desc">0 / 300</div>
+        </div>
+        <div class="field">
+          <label>O que ela faz</label>
+          <textarea id="f-what" placeholder="Comportamento principal e output esperado..." oninput="update()"></textarea>
+        </div>
+        <div class="field">
+          <label>Outputs esperados</label>
+          <textarea id="f-outputs" placeholder="ex: arquivo HTML único, SKILL.md, relatório markdown..." oninput="update()" style="min-height:44px"></textarea>
+        </div>
+        <div class="field">
+          <label>Dependências</label>
+          <input id="f-deps" placeholder="ex: bash, python, node, nenhuma" oninput="update()">
+        </div>
+
+        <div class="hr"></div>
+        <div class="sec">Triggers</div>
+        <div class="trig-list" id="trigger-list"></div>
+        <button class="btn-add" onclick="addTrigger()">+ adicionar frase trigger</button>
+
+        <div class="hr"></div>
+        <div class="sec">Stack</div>
+        <div class="tag-row" id="stack-tags">
+          <span class="tag" onclick="toggleTag(this,'Vanilla JS')">Vanilla JS</span>
+          <span class="tag" onclick="toggleTag(this,'Cloudflare Workers')">CF Workers</span>
+          <span class="tag" onclick="toggleTag(this,'Lightning Network')">Lightning</span>
+          <span class="tag" onclick="toggleTag(this,'D1 / KV')">D1 / KV</span>
+          <span class="tag" onclick="toggleTag(this,'PWA')">PWA</span>
+          <span class="tag" onclick="toggleTag(this,'Offline-first')">Offline-first</span>
+          <span class="tag" onclick="toggleTag(this,'Node.js')">Node.js</span>
+          <span class="tag" onclick="toggleTag(this,'WebSocket')">WebSocket</span>
+          <span class="tag" onclick="toggleTag(this,'SQLite')">SQLite</span>
+          <span class="tag" onclick="toggleTag(this,'Bitcoin')">Bitcoin</span>
+        </div>
+
+        <div class="hr"></div>
+        <div class="sec">Regras</div>
+        <textarea id="f-rules" placeholder="Regras que o Claude deve sempre seguir ao usar esta skill..." oninput="update()"></textarea>
+        <div class="sec">Anti-erros</div>
+        <textarea id="f-anti" placeholder="Comportamentos proibidos, armadilhas comuns..." oninput="update()"></textarea>
+
+        <!-- exemplos colapsável -->
+        <div class="coll">
+          <div class="coll-hdr" onclick="toggleColl()">
+            Exemplos (opcional)
+            <span id="coll-arrow">▶</span>
+          </div>
+          <div class="coll-body" id="coll-body">
+            <div class="field">
+              <label>Prompt que ativa</label>
+              <input id="f-ex-in" placeholder='ex: cria cardápio digital para restaurante X' oninput="update()">
+            </div>
+            <div class="field">
+              <label>Output esperado</label>
+              <textarea id="f-ex-out" placeholder="ex: gera lqr-app.html com QR e painel admin" oninput="update()" style="min-height:44px"></textarea>
+            </div>
+            <div class="field">
+              <label>Prompt que NÃO ativa</label>
+              <input id="f-ex-no" placeholder='ex: me explica o que é um cardápio digital' oninput="update()">
+            </div>
+          </div>
+        </div>
+
+        <div class="field">
+          <label>Notas extras</label>
+          <textarea id="f-notes" placeholder="Links, contexto, manifesto..." oninput="update()" style="min-height:44px"></textarea>
+        </div>
+
+        <div class="btn-row">
+          <button class="btn" onclick="clearForm()">Limpar</button>
+          <button class="btn btn-md" onclick="downloadMd()">Baixar .md</button>
+          <button class="btn btn-skill" onclick="downloadSkill()">Baixar .skill</button>
+        </div>
+
+        <div class="hr"></div>
+        <div class="sec">Testar skill</div>
+        <div class="runner-wrap">
+          <input id="runner-input" placeholder='ex: "cria cardápio pra mim"' onkeydown="if(event.key==='Enter')testSkill()">
+          <button class="btn" onclick="testSkill()">Testar</button>
+        </div>
+        <div class="runner-result" id="runner-result"></div>
+
+        <div class="pkg-info" id="pkg-info">pacote .skill: SKILL.md · manifest.json · icon.svg</div>
+        <div class="autosave" id="autosave-indicator">auto-save: aguardando...</div>
+      </div>
+
+      <!-- PREVIEW -->
+      <div class="panel">
+        <div class="preview-label">Preview — SKILL.md</div>
+        <div class="preview" id="preview-box"><span class="pc"># preencha o formulário...</span></div>
+        <div class="btn-row">
+          <button class="btn" onclick="copyMd()">Copiar markdown</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /wrap -->
+
+  <!-- ══════════ MARKET MODE ══════════ -->
+  <div id="market-mode">
+    <div class="wrap market-wrap">
+      <div class="market-title">Explorar Skills</div>
+      <div class="market-sub">Escolha um template, edite e baixe em 1 clique.</div>
+      <div class="market-grid" id="market-grid"></div>
+    </div>
+  </div>
+
+</div><!-- /outer -->
+
+<script>
+let activeTags=[];
+let labOn=false;
+let darkMode=false;
+let triggerCount=0;
+let saveTimer=null;
+let currentMode='pop';
+
+const LAB={
+  stack:['Vanilla JS','Cloudflare Workers','Lightning Network','D1 / KV','PWA','Offline-first','Bitcoin'],
+  rules:`- Sem frameworks externos — apenas Vanilla JS puro\n- Arquivo único sempre que possível\n- Zero-Exposure: nenhum dado sensível no frontend\n- Estética Ink × Gold × Cyber: preto #0a0a0a, amarelo #f5c842, azul elétrico #1a8cff, branco #f0f0f0\n- Pagamentos via Lightning Network (LNURL-pay labriolag@bipa.app)\n- Backend obrigatoriamente Cloudflare Workers\n- Offline-first com Service Worker quando aplicável`,
+  anti:`- Nunca usar React, Vue, Angular ou qualquer framework\n- Nunca armazenar chaves privadas no cliente\n- Nunca depender de servidor centralizado próprio\n- Nunca usar cores genéricas ou paletas fora do padrão Labriolag\n- Nunca criar múltiplos arquivos quando um único resolve`,
+  notes:`"A soberania digital não é pedida, é construída linha por linha." — Labriolag Manifesto`
+};
+
+const TEMPLATES={
+  cardapio:{what:'Criar cardápios digitais bonitos e funcionais para restaurantes e lanchonetes',how:'Layout limpo, com seções por categoria, preços, descrições e opção de pedido via WhatsApp',when:'quando eu pedir cardápio digital, criar menu, montar cardápio'},
+  atendente:{what:'Criar um atendente virtual que responde perguntas e direciona clientes de forma automática',how:'Tom amigável, respostas curtas, sempre oferece uma próxima ação ao cliente',when:'quando eu pedir atendente, chatbot, assistente de atendimento'},
+  posts:{what:'Gerar posts para redes sociais com caption, hashtags e sugestão de imagem',how:'Linguagem direta e chamativa, adaptada ao nicho informado pelo usuário',when:'quando eu pedir post, conteúdo para redes sociais, caption'},
+  site:{what:'Criar landing pages e sites simples em HTML puro para pequenos negócios',how:'Arquivo HTML único, responsivo, com seção hero, serviços, contato e WhatsApp CTA',when:'quando eu pedir site, landing page, página de apresentação'},
+  relatorio:{what:'Gerar relatórios estruturados em markdown a partir de dados ou descrições informadas',how:'Seções claras, tabelas quando necessário, resumo executivo no topo',when:'quando eu pedir relatório, análise, resumo estruturado'}
+};
+
+/* ── MODE TOGGLE ──────────────────────── */
+function setMode(mode){
+  currentMode=mode;
+  document.getElementById('pop-mode').style.display=mode==='pop'?'block':'none';
+  document.getElementById('pro-mode').style.display=mode==='pro'?'block':'none';
+  document.getElementById('market-mode').style.display=mode==='market'?'block':'none';
+  document.getElementById('tab-pop').classList.toggle('active',mode==='pop');
+  document.getElementById('tab-pro').classList.toggle('active',mode==='pro');
+  document.getElementById('tab-market').classList.toggle('active',mode==='market');
+}
+
+/* ── TEMPLATES ────────────────────────── */
+function fillTemplate(key){
+  const t=TEMPLATES[key];
+  if(!t) return;
+  document.getElementById('pop-what').value=t.what;
+  document.getElementById('pop-how').value=t.how;
+  document.getElementById('pop-when').value=t.when;
+  popPreview();
+}
+
+/* ── POP GENERATE ─────────────────────── */
+function popPreview(){
+  // live feedback (optional, lightweight)
+}
+
+function generateFromPop(){
+  const what=document.getElementById('pop-what').value.trim();
+  const how=document.getElementById('pop-how').value.trim();
+  const when=document.getElementById('pop-when').value.trim();
+  if(!what){document.getElementById('pop-what').focus();return;}
+
+  // traduz POP → PRO
+  const slug=what.slice(0,40).toLowerCase().replace(/[^a-z0-9\u00c0-\u00ff]+/g,'-').replace(/^-|-$/g,'');
+  document.getElementById('f-name').value=slug;
+  document.getElementById('f-desc').value=when||what;
+  document.getElementById('f-what').value=what;
+  if(how) document.getElementById('f-rules').value=how;
+
+  // trigger automático
+  document.getElementById('trigger-list').innerHTML='';
+  triggerCount=0;
+  if(when) addTrigger(when);
+  else addTrigger(what.split(' ').slice(0,5).join(' '));
+
+  update();
+
+  // mostra resultado
+  const md=buildMd();
+  const lines=md.split('\n').slice(0,18).join('\n');
+  document.getElementById('pop-result-preview').textContent=lines+(md.split('\n').length>18?'\n...':'');
+  document.getElementById('pop-result').style.display='block';
+  document.getElementById('pop-result').scrollIntoView({behavior:'smooth',block:'nearest'});
+}
+
+/* ── LAB TOGGLE ───────────────────────── */
+function toggleLab(){
+  labOn=!labOn;
+  document.getElementById('lab-toggle').classList.toggle('on',labOn);
+  if(labOn){
+    activeTags=[...LAB.stack];
+    document.querySelectorAll('.tag').forEach(t=>{
+      const match=LAB.stack.some(s=>t.textContent.trim()===s||s.includes(t.textContent.trim())||t.textContent.trim().includes(s.split(' ')[0]));
+      t.classList.toggle('active',match);
+    });
+    if(!document.getElementById('f-rules').value) document.getElementById('f-rules').value=LAB.rules;
+    if(!document.getElementById('f-anti').value) document.getElementById('f-anti').value=LAB.anti;
+    if(!document.getElementById('f-notes').value) document.getElementById('f-notes').value=LAB.notes;
+  }
+  update();
+}
+
+function toggleDark(){
+  darkMode=!darkMode;
+  document.getElementById('preview-box').classList.toggle('dark-mode',darkMode);
+  document.getElementById('theme-btn').textContent=darkMode?'claro':'escuro';
+}
+
+function toggleTag(el,val){
+  el.classList.toggle('active');
+  if(el.classList.contains('active')){if(!activeTags.includes(val))activeTags.push(val);}
+  else activeTags=activeTags.filter(t=>t!==val);
+  update();
+}
+
+function addTrigger(val=''){
+  const list=document.getElementById('trigger-list');
+  const id='trig-'+(triggerCount++);
+  const d=document.createElement('div');
+  d.className='trig-item';
+  d.innerHTML=`<input id="${id}" placeholder='ex: "quando eu pedir..."' oninput="update()"><button class="trig-del" onclick="this.parentElement.remove();update()">×</button>`;
+  list.appendChild(d);
+  if(val) document.getElementById(id).value=val;
+  update();
+}
+
+function getTriggers(){
+  return [...document.querySelectorAll('.trig-item input')].map(i=>i.value.trim()).filter(Boolean);
+}
+
+function toggleColl(){
+  const b=document.getElementById('coll-body');
+  b.classList.toggle('open');
+  document.getElementById('coll-arrow').textContent=b.classList.contains('open')?'▼':'▶';
+}
+
+function v(id){const e=document.getElementById(id);return e?e.value.trim():'';}
+
+/* ── BUILD MARKDOWN ───────────────────── */
+function buildMd(){
+  const name=v('f-name')||'minha-skill';
+  const ver=v('f-ver')||'v1.0';
+  const author=v('f-author');
+  const desc=v('f-desc');
+  const what=v('f-what');
+  const outputs=v('f-outputs');
+  const deps=v('f-deps');
+  const rules=v('f-rules');
+  const anti=v('f-anti');
+  const notes=v('f-notes');
+  const exIn=v('f-ex-in');
+  const exOut=v('f-ex-out');
+  const exNo=v('f-ex-no');
+  const triggers=getTriggers();
+
+  let md='---\n';
+  md+=`name: ${name}\nversion: ${ver}\n`;
+  if(author) md+=`author: ${author}\n`;
+  md+=`description: ${desc||'Descreva quando usar esta skill.'}\n`;
+  if(deps) md+=`dependencies: ${deps}\n`;
+  md+='---\n\n';
+  md+=`# ${name}\n\n`;
+  if(what) md+=`## O que faz\n${what}\n\n`;
+  if(outputs){md+=`## Outputs esperados\n`;outputs.split('\n').filter(l=>l.trim()).forEach(o=>md+=`- ${o.replace(/^[-•]\s*/,'')}\n`);md+='\n';}
+  if(activeTags.length) md+=`## Stack\n${activeTags.map(s=>`- ${s}`).join('\n')}\n\n`;
+  if(triggers.length){md+=`## Triggers\nFrases que devem ativar esta skill:\n`;triggers.forEach(t=>md+=`- "${t}"\n`);md+='\n';}
+  if(rules){md+=`## Princípios obrigatórios\n`;rules.split('\n').filter(l=>l.trim()).forEach(r=>md+=`- ${r.replace(/^[-•]\s*/,'')}\n`);md+='\n';}
+  if(anti){md+=`## Anti-erros\n`;anti.split('\n').filter(l=>l.trim()).forEach(a=>md+=`- ${a.replace(/^[-•]\s*/,'')}\n`);md+='\n';}
+  if(exIn||exOut||exNo){
+    md+=`## Exemplos\n`;
+    if(exIn) md+=`**Ativa:** "${exIn}"\n\n`;
+    if(exOut) md+=`**Output:** ${exOut}\n\n`;
+    if(exNo) md+=`**Não ativa:** "${exNo}"\n\n`;
+  }
+  if(notes) md+=`## Notas\n${notes}\n\n`;
+  if(labOn) md+=`\n---\n*Built with Skill Builder v4 — Labriolag Holding*\n`;
+  return md;
+}
+
+/* ── UPDATE ───────────────────────────── */
+function update(){
+  const desc=document.getElementById('f-desc');
+  document.getElementById('char-desc').textContent=desc.value.length+' / 300';
+  document.getElementById('version-badge').textContent=v('f-ver')||'v4.0';
+  document.getElementById('preview-box').innerHTML=highlight(buildMd());
+  scheduleAutosave();
+}
+
+function highlight(t){
+  return t.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+    .replace(/(^---$)/gm,'<span class="pc">$1</span>')
+    .replace(/(^(?:name|version|author|description|dependencies):)/gm,'<span class="pk">$1</span>')
+    .replace(/(^# .+)/gm,'<span class="ph1">$1</span>')
+    .replace(/(^## .+)/gm,'<span class="ph2">$1</span>')
+    .replace(/(^- .+)/gm,'<span class="pl">$1</span>');
+}
+
+/* ── AUTO-SAVE (localStorage) ──────────── */
+function scheduleAutosave(){
+  clearTimeout(saveTimer);
+  saveTimer=setTimeout(()=>{
+    try{
+      const data={
+        name:v('f-name'),ver:v('f-ver'),author:v('f-author'),
+        desc:v('f-desc'),what:v('f-what'),outputs:v('f-outputs'),
+        deps:v('f-deps'),rules:v('f-rules'),anti:v('f-anti'),
+        notes:v('f-notes'),exIn:v('f-ex-in'),exOut:v('f-ex-out'),exNo:v('f-ex-no'),
+        tags:activeTags,
+        triggers:getTriggers(),
+        labOn
+      };
+      localStorage.setItem('sb_draft',JSON.stringify(data));
+      const ind=document.getElementById('autosave-indicator');
+      ind.textContent='auto-save: salvo '+new Date().toLocaleTimeString('pt-BR');
+      ind.className='autosave saved';
+      setTimeout(()=>{ind.className='autosave';},2000);
+    }catch(e){}
+  },800);
+}
+
+function loadAutosave(){
+  try{
+    const raw=localStorage.getItem('sb_draft');
+    if(!raw) return;
+    const d=JSON.parse(raw);
+    const set=(id,val)=>{const e=document.getElementById(id);if(e&&val!==undefined)e.value=val;};
+    set('f-name',d.name);set('f-ver',d.ver||'v1.0');set('f-author',d.author||'Labriolag');
+    set('f-desc',d.desc);set('f-what',d.what);set('f-outputs',d.outputs);
+    set('f-deps',d.deps);set('f-rules',d.rules);set('f-anti',d.anti);
+    set('f-notes',d.notes);set('f-ex-in',d.exIn);set('f-ex-out',d.exOut);set('f-ex-no',d.exNo);
+    if(d.tags){
+      activeTags=d.tags;
+      document.querySelectorAll('.tag').forEach(t=>{
+        t.classList.toggle('active',activeTags.some(s=>t.textContent.trim()===s||s.includes(t.textContent.trim())));
+      });
+    }
+    if(d.triggers){
+      document.getElementById('trigger-list').innerHTML='';
+      triggerCount=0;
+      d.triggers.forEach(t=>addTrigger(t));
+    }
+    if(d.labOn){labOn=false;toggleLab();}
+    update();
+  }catch(e){}
+}
+
+/* ── CLEAR ────────────────────────────── */
+function clearForm(){
+  ['f-name','f-desc','f-what','f-outputs','f-deps','f-rules','f-anti','f-notes','f-ex-in','f-ex-out','f-ex-no'].forEach(id=>{const e=document.getElementById(id);if(e)e.value='';});
+  document.getElementById('f-ver').value='v1.0';
+  document.getElementById('f-author').value='Labriolag';
+  activeTags=[];labOn=false;
+  document.getElementById('lab-toggle').classList.remove('on');
+  document.querySelectorAll('.tag').forEach(t=>t.classList.remove('active'));
+  document.getElementById('trigger-list').innerHTML='';
+  try{localStorage.removeItem('sb_draft');}catch(e){}
+  update();
+}
+
+/* ── COPY / DOWNLOAD ──────────────────── */
+function copyMd(){
+  navigator.clipboard.writeText(buildMd()).then(()=>{
+    const b=event.target,o=b.textContent;
+    b.textContent='Copiado!';setTimeout(()=>b.textContent=o,1500);
+  });
+}
+
+function downloadMd(){
+  const name=v('f-name')||'minha-skill';
+  dl(new Blob([buildMd()],{type:'text/markdown'}),name+'.md');
+}
+
+function downloadSkill(){
+  const name=v('f-name')||'minha-skill';
+  dl(new Blob([buildZip(name,buildMd())],{type:'application/zip'}),name+'.skill');
+}
+
+function dl(blob,fname){
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a');
+  a.href=url;a.download=fname;a.click();
+  URL.revokeObjectURL(url);
+}
+
+/* ── ZIP BUILDER (multi-arquivo) ──────── */
+function buildZip(name,md){
+  function s2u(s){return new TextEncoder().encode(s);}
+  function cat(a){let l=0;a.forEach(x=>l+=x.length);const r=new Uint8Array(l);let o=0;a.forEach(x=>{r.set(x,o);o+=x.length;});return r;}
+  function crc32(d){let c=0xFFFFFFFF;for(let i=0;i<d.length;i++){c^=d[i];for(let j=0;j<8;j++)c=(c&1)?(c>>>1)^0xEDB88320:(c>>>1);}return(c^0xFFFFFFFF)>>>0;}
+  function u16(n){const b=new Uint8Array(2);new DataView(b.buffer).setUint16(0,n,true);return b;}
+  function u32(n){const b=new Uint8Array(4);new DataView(b.buffer).setUint32(0,n,true);return b;}
+
+  function fileEntry(path,content){
+    const fn=s2u(path),fd=s2u(content),crc=crc32(fd);
+    const now=new Date();
+    const dt=((now.getHours()<<11)|(now.getMinutes()<<5)|(Math.floor(now.getSeconds()/2)))&0xFFFF;
+    const dd=(((now.getFullYear()-1980)<<9)|((now.getMonth()+1)<<5)|now.getDate())&0xFFFF;
+    const lh=cat([new Uint8Array([0x50,0x4B,0x03,0x04]),u16(20),u16(0),u16(0),u16(dt),u16(dd),u32(crc),u32(fd.length),u32(fd.length),u16(fn.length),u16(0),fn,fd]);
+    const cd=cat([new Uint8Array([0x50,0x4B,0x01,0x02]),u16(20),u16(20),u16(0),u16(0),u16(dt),u16(dd),u32(crc),u32(fd.length),u32(fd.length),u16(fn.length),u16(0),u16(0),u16(0),u16(0),u32(0),u32(0),fn]);
+    return {lh,cd};
+  }
+
+  const files=[
+    fileEntry(name+'/SKILL.md', md),
+    fileEntry(name+'/manifest.json', buildManifest()),
+    fileEntry(name+'/icon.svg', generateIconSVG())
+  ];
+
+  let localParts=[],centralParts=[],offset=0;
+  files.forEach(f=>{
+    localParts.push(f.lh);
+    const cd=new Uint8Array(f.cd);
+    new DataView(cd.buffer).setUint32(42,offset,true);
+    centralParts.push(cd);
+    offset+=f.lh.length;
+  });
+  const central=cat(centralParts);
+  const eo=cat([new Uint8Array([0x50,0x4B,0x05,0x06]),u16(0),u16(0),u16(files.length),u16(files.length),u32(central.length),u32(offset),u16(0)]);
+  return cat([...localParts,central,eo]);
+}
+
+/* ── SKILL RUNNER ─────────────────────── */
+function testSkill(){
+  const input=document.getElementById('runner-input').value.trim().toLowerCase();
+  const res=document.getElementById('runner-result');
+  if(!input){res.className='runner-result';return;}
+  const triggers=getTriggers();
+  const desc=(v('f-desc')||'').toLowerCase();
+  const what=(v('f-what')||'').toLowerCase();
+  const allTerms=[...triggers.map(t=>t.toLowerCase()),desc,what].filter(Boolean);
+  const words=input.split(/\s+/);
+  const matched=allTerms.some(term=>words.some(w=>term.includes(w))||term.split(/\s+/).some(tw=>input.includes(tw)));
+  if(matched){
+    const which=triggers.find(t=>input.includes(t.toLowerCase().split(' ')[0]))||triggers[0]||'trigger da skill';
+    res.className='runner-result hit';
+    res.textContent='Skill ATIVARIA — match: "'+which+'"';
+  } else {
+    res.className='runner-result miss';
+    res.textContent='Skill NÃO ativaria — nenhum trigger correspondeu. Revise os triggers.';
+  }
+}
+
+/* ── MARKETPLACE ──────────────────────── */
+const MARKET_SKILLS=[
+  {name:'cardapio-pro',icon:'C',desc:'Cardápios digitais com QR e WhatsApp',what:'Gerar HTML completo de cardápio com categorias, preços e botão de pedido via WhatsApp',rules:'Layout limpo, mobile-first, cores do restaurante',triggers:['cardápio digital','criar menu','montar cardápio'],tags:['PWA','Offline-first'],uses:42},
+  {name:'post-viral',icon:'P',desc:'Posts com alto engajamento para redes sociais',what:'Criar caption + hashtags + ideia visual adaptada ao nicho',rules:'Tom chamativo, direto, com CTA claro',triggers:['criar post','conteúdo instagram','legenda'],tags:['Social','Marketing'],uses:87},
+  {name:'landing-fast',icon:'L',desc:'Landing pages em HTML puro, sem framework',what:'Gerar página com hero, seção de serviços, CTA e contato',rules:'Arquivo único, responsivo, WhatsApp CTA',triggers:['criar site','landing page','página de apresentação'],tags:['Vanilla JS','PWA'],uses:31},
+  {name:'relatorio-exec',icon:'R',desc:'Relatórios executivos em markdown estruturado',what:'Criar relatório com resumo, dados, análise e próximos passos',rules:'Seções claras, tabelas quando necessário, linguagem objetiva',triggers:['criar relatório','análise','resumo executivo'],tags:['Markdown'],uses:19},
+  {name:'atendente-auto',icon:'A',desc:'Atendente virtual para pequenos negócios',what:'Responder perguntas frequentes e direcionar clientes automaticamente',rules:'Tom amigável, respostas curtas, sempre oferece próxima ação',triggers:['atendente','chatbot','assistente de atendimento'],tags:['Offline-first'],uses:56},
+  {name:'lqr-builder',icon:'Q',desc:'Sistemas de cardápio com QR por mesa',what:'Criar sistema completo com QR único por mesa, pedidos em tempo real e painel admin',rules:'Vanilla JS puro, WebSocket para tempo real, Ink × Gold × Cyber',triggers:['qr cardápio','sistema de pedidos','cardápio por mesa'],tags:['Vanilla JS','WebSocket','PWA'],uses:14}
+];
+
+function renderMarket(){
+  const grid=document.getElementById('market-grid');
+  if(!grid) return;
+  grid.innerHTML='';
+  MARKET_SKILLS.forEach(skill=>{
+    const el=document.createElement('div');
+    el.className='mcard';
+    el.innerHTML=`
+      <div style="display:flex;align-items:center;gap:10px">
+        <div class="mcard-icon">${skill.icon}</div>
+        <div>
+          <div class="mcard-name">${skill.name}</div>
+          <div class="mcard-uses">${skill.uses} usos</div>
+        </div>
+      </div>
+      <div class="mcard-desc">${skill.desc}</div>
+      <div class="mcard-tags">${skill.tags.map(t=>`<span class="mcard-tag">${t}</span>`).join('')}</div>
+      <button class="rbtn gold" style="margin-top:4px" onclick='importSkill(${JSON.stringify(skill)})'>Usar este →</button>`;
+    grid.appendChild(el);
+  });
+}
+
+function importSkill(skill){
+  setMode('pro');
+  document.getElementById('f-name').value=skill.name;
+  document.getElementById('f-desc').value=skill.desc;
+  document.getElementById('f-what').value=skill.what;
+  if(skill.rules) document.getElementById('f-rules').value=skill.rules;
+  document.getElementById('trigger-list').innerHTML='';
+  triggerCount=0;
+  (skill.triggers||[]).forEach(t=>addTrigger(t));
+  activeTags=skill.tags||[];
+  document.querySelectorAll('.tag').forEach(t=>{
+    t.classList.toggle('active',activeTags.some(s=>t.textContent.trim()===s||t.textContent.trim().includes(s.split(' ')[0])));
+  });
+  update();
+  document.getElementById('f-name').scrollIntoView({behavior:'smooth',block:'start'});
+}
+
+/* ── MANIFEST ─────────────────────────── */
+function buildManifest(){
+  const name=v('f-name')||'minha-skill';
+  const ver=(v('f-ver')||'v1.0').replace(/^v/,'');
+  const author=v('f-author')||'Labriolag';
+  const desc=v('f-desc')||'AI Skill';
+  return JSON.stringify({
+    sdk:'labriolag-skill-v1',
+    id:name,
+    version:ver,
+    author:author,
+    type:'agent-skill',
+    description:desc,
+    capabilities:activeTags.length?activeTags:['general'],
+    entry:'SKILL.md',
+    created:new Date().toISOString().split('T')[0]
+  },null,2);
+}
+
+/* ── ICON SVG ─────────────────────────── */
+function generateIconSVG(){
+  const name=v('f-name')||'S';
+  const letter=name.charAt(0).toUpperCase();
+  return `<svg xmlns="http://www.w3.org/2000/svg" width="256" height="256" viewBox="0 0 256 256">
+<rect width="256" height="256" rx="48" fill="#0a0a0a"/>
+<text x="128" y="148" dominant-baseline="middle" text-anchor="middle" font-family="Arial,sans-serif" font-size="128" font-weight="700" fill="#f5c842">${letter}</text>
+</svg>`;
+}
+
+/* ── INIT ─────────────────────────────── */
+loadAutosave();
+addTrigger();
+renderMarket();
+update();
+</script>
+</body>
+</html>
